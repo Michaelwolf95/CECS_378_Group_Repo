@@ -18,9 +18,21 @@ Make sure to use github to commit and push all of your code so the instructor ca
 You will design these modules:
 """
 # IMPORTS
-import cryptography.hazmat as Hazmat
-from cryptography.fernet import Fernet
-import random
+import os
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+
+
+
+
+backend = default_backend()
+key = os.urandom(32)
+iv = os.urandom(16)
+cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
+encryptor = cipher.encryptor()
+ct = encryptor.update(b"a secret message") + encryptor.finalize()
+decryptor = cipher.decryptor()
+decryptor.update(ct) + decryptor.finalize()
 
 """ PART 1
 (C, IV)= Myencrypt(message, key):
