@@ -18,7 +18,8 @@ Make sure to use github to commit and push all of your code so the instructor ca
 You will design these modules:
 """
 # IMPORTS
-
+import cryptography.hazmat as haz
+import random
 
 """ PART 1
 (C, IV)= Myencrypt(message, key):
@@ -29,6 +30,21 @@ You return an error if the len(key) < 32 (i.e., the key has to be 32 bytes= 256 
 (You'll have to write the inverse of the above methods.)
 """
 
+def MyEncrypt(message, key):
+    result = ""
+    #random.rand
+    
+    iv = haz.primitives.ciphers.modes.CBC.initialization_vector
+    print(iv)
+    return result;
+
+#print(haz.primitives)
+MyEncrypt("Test", "NotAKey")
+
+def MyDecrypt(message, key):
+    result = ""
+    
+    return result;
 
 
 """ PART 2
