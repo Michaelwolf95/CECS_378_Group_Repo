@@ -18,7 +18,8 @@ Make sure to use github to commit and push all of your code so the instructor ca
 You will design these modules:
 """
 # IMPORTS
-import cryptography.hazmat as haz
+import cryptography.hazmat as Hazmat
+from cryptography.fernet import Fernet
 import random
 
 """ PART 1
@@ -30,22 +31,34 @@ You return an error if the len(key) < 32 (i.e., the key has to be 32 bytes= 256 
 (You'll have to write the inverse of the above methods.)
 """
 
+def GenerateIV():
+    iv =  1 #random.
+    
+    return iv;
+
 def MyEncrypt(message, key):
     result = ""
+    iv = 1
     #random.rand
-    
-    iv = haz.primitives.ciphers.modes.CBC.initialization_vector
+    #iv = Hazmat.primitives.ciphers.modes.CBC.initialization_vector
     print(iv)
-    return result;
+    return result, iv;
 
-#print(haz.primitives)
-MyEncrypt("Test", "NotAKey")
 
-def MyDecrypt(message, key):
+
+#MyEncrypt("Test", "NotAKey")
+
+def MyDecrypt(message, key, iv):
     result = ""
     
     return result;
 
+#key = Fernet.generate_key()
+#cipher_suite = Fernet(key)
+#encoded_text = cipher_suite.encrypt(b"Hello stackoverflow!")
+#print(encoded_text)
+#decoded_text = cipher_suite.decrypt(encoded_text)
+#print(decoded_text)
 
 """ PART 2
 (C, IV, key, ext)= MyfileEncrypt (filepath):
