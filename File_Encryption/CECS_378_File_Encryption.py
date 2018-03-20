@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import base64
-
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -27,24 +26,6 @@ def Myencrypt(plaintext, key):
   ciphertext = encryptor.update(plaintext) + encryptor.finalize()
   #returns the values gotten
   return (iv, ciphertext, encryptor.tag)
-    
-def MyfileEncrypt(filepath):
-  #Generates the key
-  key = os.urandom(KeyLength)
-  #Retrieves the file extension
-  file_name, file_extension = os.path.splitext(filepath)
-
-  #Opens the file specified at the file path in mode read binary
-  with open(filepath, "rb") as binary_file:
-    # Read the whole file at once
-    data = binary_file.read()
-    #Encrypts the file
-    iv, ciphertext, tag = Myencrypt(
-      data,
-      key
-    )
-    #Returns the encrypted values
-    return (ciphertext, tag, iv, key, file_extension)
 
 def Mydecrypt(ciphertext, tag, iv, key):
   #Decrypts the ciphertext using the tag, iv and key
@@ -79,6 +60,24 @@ def MyfileDecrypt(filepath, key):
     f.close()
     #returns the name of the decrypted file
     return output_filename
+    
+def MyfileEncrypt(filepath):
+  #Generates the key
+  key = os.urandom(KeyLength)
+  #Retrieves the file extension
+  file_name, file_extension = os.path.splitext(filepath)
+
+  #Opens the file specified at the file path in mode read binary
+  with open(filepath, "rb") as binary_file:
+    # Read the whole file at once
+    data = binary_file.read()
+    #Encrypts the file
+    iv, ciphertext, tag = Myencrypt(
+      data,
+      key
+    )
+    #Returns the encrypted values
+    return (ciphertext, tag, iv, key, file_extension)    
 
 def encrypt_file(filepath):
   #Retrieves the file name from the file path
@@ -95,7 +94,7 @@ def encrypt_file(filepath):
   data['file_extension'] = file_extension
   
   #Creates the new name for the file using the original file name with a customized ext
-  output_filename = file_name + '.mycrypt'
+  output_filename = file_name + '.enc'
   
   #Creates a new file using the file name
   with open(output_filename, 'w') as outfile:
@@ -208,9 +207,9 @@ def MyfileRSADecrypt(filepath, RSACipher, RSA_Privatekey_filepath):
 ## UI
 #sys.argv is the list of command line arguments when enacting a python script
 #if command '--encrypt' is in the command line argument
-if '--encrypt' in sys.argv:
+if '-enc' in sys.argv:
   #the file path is the command after the --encrypt command
-  filepath = sys.argv[sys.argv.index('--encrypt') + 1]
+  filepath = sys.argv[sys.argv.index('-enc') + 1]
   #calls the encrypt_file on the filepath
   key, output_filename = encrypt_file(filepath)
   #removes the current file
@@ -219,11 +218,11 @@ if '--encrypt' in sys.argv:
   print("Key: ", base64.b64encode(key).decode('utf-8'))
   print("Output file: ", output_filename)
   #Checks for the --decrypt amd --key command in the command line arguments
-elif '--decrypt' in sys.argv and '--key' in sys.argv:
+elif '-dec' in sys.argv and '-k' in sys.argv:
   #Checks for the file path in the command following the --decrypt
-  filepath = sys.argv[sys.argv.index('--decrypt') + 1]
+  filepath = sys.argv[sys.argv.index('-dec') + 1]
   #Key is decoded from base64 so it works in decrypting the file
-  key = base64.b64decode(sys.argv[sys.argv.index('--key') + 1])
+  key = base64.b64decode(sys.argv[sys.argv.index('-k') + 1])
   #The fileDecrypt method is called
   output_filename = MyfileDecrypt(filepath, key)
   #Removes the encrypted file path
@@ -258,5 +257,5 @@ elif '--rsadecrypt' in sys.argv and '--rsacipher' in sys.argv and '--rsakeypath'
   print("Output file: ", output_filename)
 #If the command was enacted wrong it will print out the correct way 
 else:
-  print("for regular file encryption\n[--encrypt {filename}] or [--decrypt {filename} --key {key}] is required")
+  print("for regular file encryption\n[-enc {filename}] or [-dec {filename} -k {key}] is required")
   print("for rsa file encryption\n[--rsaencrypt {filename} --rsakeypath {keyfilename}] or [--rsadecrypt {filename} --rsakeypath (keyfilename) --rsacipher {rsakey}] is required")
