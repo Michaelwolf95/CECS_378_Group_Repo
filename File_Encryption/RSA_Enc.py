@@ -92,22 +92,16 @@ def MyRSAEncrypt(filepath, RSA_PublicKey_filepath):
   #Calls my file encrypt to encrypt the file
   ciphertext, tag, iv, key, file_extension = MyfileEncrypt(filepath)
   #checks for a password to access the rsa key pair
-  password = input("Input your password for accessing your public key or leave blank if you have none")
-  if password == "":
-      password = None
-  else:
-      password = bytes(password, 'utf-8')
   #opens the rsa key filepath and reads the private key
   with open(RSA_PublicKey_filepath, 'rb') as key_file:
-      private_key = serialization.load_pem_private_key(
+      public_key = serialization.load_ssh_public_key(
           key_file.read(),
-          password,
+#          password,
           backend=default_backend()
       )
       #closes the open file  
       key_file.close()
       #retireves the public key from the private retrieved (One thing I'm unsure of)
-      public_key = private_key.public_key()
       #encrypts the key generated from myfileEncrypt with rsa public key	  
       RSACipher = public_key.encrypt(
         key,
