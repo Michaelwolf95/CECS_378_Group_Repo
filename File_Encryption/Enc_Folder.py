@@ -130,6 +130,7 @@ def rsa_encrypt_file(filepath, RSA_PublicKey_filepath):
   data['RSACipher'] = base64.b64encode(RSACipher).decode('utf-8')
   data['file_extension'] = file_extension
   
+  os.remove(filepath)
   #Creates the new name for the file using the original file name with a customized ext
   output_filename = file_name + '.rsamycrypt'
   
@@ -142,11 +143,12 @@ def rsa_encrypt_file(filepath, RSA_PublicKey_filepath):
 
 def MyFileRSADecrypt(RSACipher, RSA_Privatekey_filepath):
   #checks for a password to access the rsa key pair
-  password = input("Input your password for accessing your public key or leave blank if you have none")
-  if password == "":
-      password = None
-  else:
-      password = bytes(password, 'utf-8')
+#  password = input("Input your password for accessing your public key or leave blank if you have none")
+#  if password == "":
+#      password = None
+#  else:
+#      password = bytes(password, 'utf-8')
+  password = None
   #opens the rsa key filepath and reads the private key
   with open(RSA_Privatekey_filepath, 'rb') as key_file:
       private_key = serialization.load_pem_private_key(
@@ -168,6 +170,21 @@ def MyFileRSADecrypt(RSACipher, RSA_Privatekey_filepath):
       #returns the values
       return (key)
 		   
+def File_Enc():
+  RSA_Key_Generate()
+  for root, dirs, files in os.walk("."):  
+    for filename in files:
+        if(not(filename == "Private key" or filename == "Public key" or filename == "Enc_Folder.py")):
+          rsa_encrypt_file(filename, "Public key")
+          
+def File_Dec():
+  for root, dirs, files in os.walk("."):  
+    for filename in files:
+      if(not(filename == "Private key" or filename == "Public key" or filename == "Enc_Folder.py")):
+          MyfileDecrypt(filename, "Private key")
+          os.remove(filename)
+  os.remove("Private key")
+  os.remove("Public key")
     
 def RSA_Key_Generate():
   private_key = rsa.generate_private_key(
@@ -221,5 +238,9 @@ elif '--decrypt' in sys.argv and '--rsakeypath' in sys.argv:
 elif '--RSAKeyGen' in sys.argv:
   RSA_Key_Generate()
   print("KeyPair Generated")
+elif '--encFolder' in sys.argv:
+  File_Enc()
+elif '--decFolder' in sys.argv:
+  File_Dec()
 else:
   print("for rsa file encryption\n[--encrypt {filename} --rsakeypath {keyfilename}] or [--decrypt {filename} --rsakeypath (keyfilename)] is required or --RSAKeyGen")
